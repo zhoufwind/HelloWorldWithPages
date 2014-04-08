@@ -24,6 +24,36 @@
             // Retrieve the input element and register our event handler.
             var nameInput = document.getElementById("nameInput");
             nameInput.addEventListener("change", this.nameInputChanged);
+
+            // Restore app data.
+            var roamingSettings = Windows.Storage.ApplicationData.current.roamingSettings;
+
+            // Restore the user name.
+            var userName = Windows.Storage.ApplicationData.current.roamingSettings.values["userName"];
+            if (userName) {
+                nameInput.value = userName;
+            }
+
+            // Restore the rating.
+            var greetingRating = roamingSettings.values["greetingRating"];
+            if (greetingRating) {
+                ratingControl.userRating = greetingRating;
+                var ratingOutput = document.getElementById("ratingOutput");
+                ratingOutput.innerText = greetingRating;
+            }
+
+            // If the app was terminated last time it ran, restore the personalized
+            // greeting. 
+            if (
+                WinJS.Application.sessionState.previousExecutionState
+                === Windows.ApplicationModel.Activation.ApplicationExecutionState.terminated) {
+                var outputValue = WinJS.Application.sessionState.greetingOutput;
+                if (outputValue) {
+                    var greetingOutput = document.getElementById("greetingOutput");
+                    greetingOutput.innerText = outputValue;
+                }
+
+            }
         },
 
         buttonClickHandler: function (eventInfo) {

@@ -19,20 +19,36 @@
                 // Restore application state here.
             }
 
-            nav.history = app.sessionState.history || {};
-            nav.history.current.initialPlaceholder = true;
+            //nav.history = app.sessionState.history || {};
+            //nav.history.current.initialPlaceholder = true;
 
-            // Optimize the load of the application and while the splash screen is shown, execute high priority scheduled work.
-            ui.disableAnimations();
-            var p = ui.processAll().then(function () {
-                return nav.navigate(nav.location || Application.navigator.home, nav.state);
-            }).then(function () {
-                return sched.requestDrain(sched.Priority.aboveNormal + 1);
-            }).then(function () {
-                ui.enableAnimations();
-            });
+            //// Optimize the load of the application and while the splash screen is shown, execute high priority scheduled work.
+            //ui.disableAnimations();
+            //var p = ui.processAll().then(function () {
+            //    return nav.navigate(nav.location || Application.navigator.home, nav.state);
+            //}).then(function () {
+            //    return sched.requestDrain(sched.Priority.aboveNormal + 1);
+            //}).then(function () {
+            //    ui.enableAnimations();
+            //});
 
-            args.setPromise(p);
+            //args.setPromise(p);
+
+            // Save the previous execution state. 
+            WinJS.Application.sessionState.previousExecutionState =
+                args.detail.previousExecutionState;
+
+            if (app.sessionState.history) {
+                nav.history = app.sessionState.history;
+            }
+            args.setPromise(WinJS.UI.processAll().then(function () {
+                if (nav.location) {
+                    nav.history.current.initialPlaceholder = true;
+                    return nav.navigate(nav.location, nav.state);
+                } else {
+                    return nav.navigate(Application.navigator.home);
+                }
+            }));
         }
     });
 
