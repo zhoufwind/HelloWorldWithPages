@@ -1,4 +1,8 @@
-﻿#contenthost {
+﻿#navbar {
+    background-color: #0094ff;
+}
+
+#contenthost {
     height: 100%;
     width: 100%;
 }
